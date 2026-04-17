@@ -1,0 +1,117 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validation Functions ---
+
+    function isValidProduct(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() < 200
+          && data.description is string && data.description.size() < 2000
+          && data.price is number && data.price >= 0
+          && data.category in ['Men', 'Women', 'Accessories']
+          && data.images is list && data.images.size() > 0 && data.images.size() <= 10
+          && data.stock is number && data.stock >= 0;
+    }
+
+    function isValidUser(data) {
+      return data.email is string && data.email.size() > 0
+          && data.role in ['customer', 'admin']
+          && (data.uid == request.auth.uid || isAdmin());
+    }
+
+    function isValidOrder(data) {
+      return data.userId == request.auth.uid
+          && data.items is list && data.items.size() > 0
+          && data.total is number && data.total >= 0
+          && data.status in ['pending', 'processing', 'shipped', 'delivered']
+          && data.createdAt == request.time;
+    }
+
+    function isValidSupportMessage(data) {
+      return data.name is string && data.name.size() > 0
+          && data.email is string && data.email.size() > 0
+          && data.message is string && data.message.size() > 0
+          && data.status == 'unread';
+    }
+
+    // --- Rules ---
+
+    // Admin Collection (System-managed, usually via Firebase Console or special script)
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Only manageable via service account/console
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidProduct(incoming());
+      allow update: if (isAdmin() && isValidProduct(incoming())) ||
+                    (isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly(['stock']));
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && isOwner(userId) && incoming().role == 'customer';
+      allow update: if (isOwner(userId) && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'email']))
+                    || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (isOwner(existing().userId) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isEmailVerified() && isValidOrder(incoming());
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /supportMessages/{messageId} {
+      allow list: if isAdmin();
+      allow get: if isAdmin();
+      allow create: if isValidSupportMessage(incoming()) && incoming().createdAt == request.time;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Test collection for initial test
+    match /test/connection {
+       allow get: if true;
+    }
+  }
+}
