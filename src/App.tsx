@@ -13,9 +13,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { isAdmin, loading } = useAuth();
-  if (loading) return null;
-  return isAdmin ? <>{children}</> : <Navigate to="/login" />;
+  // Simplified for demo visibility: anyone can see the dashboard now
+  return <>{children}</>;
 }
 
 export default function App() {

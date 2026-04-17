@@ -59,9 +59,16 @@ export default function Hero() {
         >
           <Link 
             to="/shop" 
-            className="px-12 py-5 bg-luxury-gold text-black text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden hover:bg-white transition-all duration-500 shadow-2xl"
+            className="px-12 py-5 bg-luxury-gold text-black text-[10px] uppercase tracking-[0.4em] font-extrabold overflow-hidden hover:bg-white transition-all duration-500 shadow-2xl"
           >
             Enter Boutique
+          </Link>
+
+          <Link 
+            to="/admin" 
+            className="px-12 py-5 border border-luxury-gold text-luxury-gold text-[10px] uppercase tracking-[0.4em] font-extrabold hover:bg-luxury-gold hover:text-white transition-all duration-500"
+          >
+            Manage Maison
           </Link>
           
           <Link 

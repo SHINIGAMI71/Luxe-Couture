@@ -59,11 +59,10 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center space-x-6 text-luxury-gray">
-          {isAdmin && (
-            <Link to="/admin" className="hidden md:block text-luxury-gold">
-              <ShieldCheck className="w-5 h-5" />
-            </Link>
-          )}
+          <Link to="/admin" className="hidden md:flex items-center space-x-2 text-luxury-gold hover:text-luxury-white transition-colors">
+            <ShieldCheck className="w-5 h-5" />
+            <span className="editorial-label text-inherit">Dashboard</span>
+          </Link>
           
           <button onClick={user ? logout : login} className="flex items-center space-x-2 hover:text-luxury-white transition-colors">
             <User className="w-5 h-5" />
@@ -106,11 +105,10 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              {isAdmin && (
-                <Link to="/admin" onClick={() => setIsOpen(false)} className="text-2xl font-serif text-luxury-gold">
-                  Governance
-                </Link>
-              )}
+              <Link to="/admin" onClick={() => setIsOpen(false)} className="text-2xl font-serif text-luxury-gold flex items-center space-x-2">
+                <ShieldCheck className="w-6 h-6" />
+                <span>Governance Dashboard</span>
+              </Link>
             </div>
           </motion.div>
         )}
