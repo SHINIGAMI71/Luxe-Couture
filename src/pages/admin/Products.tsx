@@ -90,7 +90,7 @@ export default function Products() {
         
         <div className="overflow-x-auto">
           <table className="w-full text-left font-sans">
-            <thead className="bg-[#f0f0f2] text-luxury-gray text-[10px] uppercase tracking-[0.2em] font-bold border-b border-luxury-border">
+            <thead className="bg-luxury-surface text-luxury-gray text-[10px] uppercase tracking-[0.2em] font-bold border-b border-luxury-border">
               <tr>
                 <th className="px-8 py-6">Product Image & Name</th>
                 <th className="px-8 py-6">Category</th>

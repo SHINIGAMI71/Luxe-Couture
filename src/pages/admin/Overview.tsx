@@ -74,13 +74,13 @@ export default function Overview() {
                     <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#666666' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#666666' }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2DED0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#555555' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#555555' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', fontSize: '10px', textTransform: 'uppercase' }}
+                  contentStyle={{ backgroundColor: '#F4F1EA', border: '1px solid #E2DED0', fontSize: '10px', textTransform: 'uppercase' }}
                 />
-                <Area type="monotone" dataKey="revenue" stroke="#B8860B" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2} />
+                <Area type="monotone" dataKey="revenue" stroke="#916A08" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -91,14 +91,14 @@ export default function Overview() {
           <div className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#666666' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#666666' }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2DED0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#555555' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#555555' }} />
                 <Tooltip 
-                   cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
-                   contentStyle={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', fontSize: '10px', textTransform: 'uppercase' }}
+                   cursor={{ fill: 'rgba(0, 0, 0, 0.03)' }}
+                   contentStyle={{ backgroundColor: '#F4F1EA', border: '1px solid #E2DED0', fontSize: '10px', textTransform: 'uppercase' }}
                 />
-                <Bar dataKey="orders" fill="#B8860B" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="orders" fill="#916A08" radius={[0, 0, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
