@@ -50,3 +50,46 @@ export const DUMMY_PRODUCTS: Product[] = [
     createdAt: new Date().toISOString()
   }
 ];
+
+export const MOCK_ORDERS = [
+  {
+    id: 'ORD-2026-X1',
+    customerEmail: 'vogue@paris.fr',
+    total: 4900,
+    status: 'delivered',
+    createdAt: new Date('2026-04-10T14:30:00Z').toISOString(),
+    items: [
+      { name: 'Silk Evening Gown', quantity: 2, price: 2450 }
+    ]
+  },
+  {
+    id: 'ORD-2026-B4',
+    customerEmail: 'curator@metmuseum.org',
+    total: 1890,
+    status: 'shipped',
+    createdAt: new Date('2026-04-12T10:15:00Z').toISOString(),
+    items: [
+      { name: 'Tailored Velvet Blazer', quantity: 1, price: 1890 }
+    ]
+  },
+  {
+    id: 'ORD-2026-G8',
+    customerEmail: 'archive@laurent.com',
+    total: 3600,
+    status: 'processing',
+    createdAt: new Date('2026-04-15T16:20:00Z').toISOString(),
+    items: [
+      { name: 'Gold Monogram Clutch', quantity: 3, price: 1200 }
+    ]
+  },
+  {
+    id: 'ORD-2026-F9',
+    customerEmail: 'collector@london.uk',
+    total: 3200,
+    status: 'pending',
+    createdAt: new Date('2026-04-17T09:45:00Z').toISOString(),
+    items: [
+      { name: 'Cashmere Overcoat', quantity: 1, price: 3200 }
+    ]
+  }
+];

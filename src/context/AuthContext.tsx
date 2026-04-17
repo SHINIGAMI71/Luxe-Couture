@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   login: () => Promise<void>;
+  mockLogin: (email: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -21,25 +22,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check for mock user first
+    const mockUser = localStorage.getItem('MaisonMockUser');
+    if (mockUser) {
+      const data = JSON.parse(mockUser);
+      setProfile(data);
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-          setProfile(docSnap.data() as UserProfile);
-        } else {
-          // Create new profile
-          const newProfile: UserProfile = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            role: 'customer',
-            createdAt: new Date().toISOString()
-          };
-          await setDoc(docRef, newProfile);
-          setProfile(newProfile);
+        try {
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            setProfile(docSnap.data() as UserProfile);
+          } else {
+            const newProfile: UserProfile = {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              role: 'customer',
+              createdAt: new Date().toISOString()
+            };
+            await setDoc(docRef, newProfile);
+            setProfile(newProfile);
+          }
+        } catch (e) {
+          console.warn("Firestore error during auth, likely unconfigured:", e);
         }
       } else {
         setProfile(null);
@@ -55,12 +68,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithPopup(auth, provider);
   };
 
-  const logout = () => signOut(auth);
+  const mockLogin = (email: string) => {
+    const mockProfile: UserProfile = {
+      uid: 'mock-123',
+      email: email,
+      displayName: 'Distinguished Curator',
+      role: email.includes('admin') ? 'admin' : 'customer',
+      createdAt: new Date().toISOString()
+    };
+    localStorage.setItem('MaisonMockUser', JSON.stringify(mockProfile));
+    setProfile(mockProfile);
+  };
+
+  const logout = async () => {
+    localStorage.removeItem('MaisonMockUser');
+    setProfile(null);
+    setUser(null);
+    try {
+      await signOut(auth);
+    } catch (e) {}
+  };
 
   const isAdmin = profile?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ user, profile, loading, isAdmin, login, mockLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );

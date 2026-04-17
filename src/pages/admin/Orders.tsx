@@ -3,16 +3,19 @@ import { db } from '../../lib/firebase';
 import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { formatCurrency } from '../../lib/utils';
 import { Package, Truck, CheckCircle, Clock, ShoppingBag as BagIcon } from 'lucide-react';
+import { MOCK_ORDERS } from '../../constants';
 
 export default function Orders() {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState<any[]>(MOCK_ORDERS);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchOrders();
+    // Only fetch from Firebase if we want to sync, but user requested "without database now"
+    // fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
+    setLoading(true);
     try {
       const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
@@ -20,20 +23,22 @@ export default function Orders() {
       querySnapshot.forEach((doc) => {
         fetched.push({ id: doc.id, ...doc.data() });
       });
-      setOrders(fetched);
+      if (fetched.length > 0) setOrders(fetched);
     } catch (error) {
-       console.error(error);
+       console.warn("Firestore error or unconfigured, using mocks:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const updateStatus = async (id: string, newStatus: string) => {
+    // Local state update for "without database now"
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+    
     try {
       await updateDoc(doc(db, 'orders', id), { status: newStatus });
-      fetchOrders();
     } catch (error) {
-      alert('Error updating status.');
+      console.warn('Backend update skipped (offline/unconfigured).');
     }
   };
 
